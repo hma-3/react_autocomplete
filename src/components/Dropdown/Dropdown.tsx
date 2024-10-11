@@ -9,7 +9,7 @@ import { DropdownMenu } from '../DropdownMenu/DropdownMenu';
 
 type Props = {
   selectedPerson: Person | null;
-  onSelect: React.Dispatch<React.SetStateAction<Person | null>>;
+  onSelect: (person: Person | null) => void;
   delay?: number;
 };
 
@@ -30,23 +30,32 @@ export const Dropdown: FC<Props> = ({
     [appliedQuery],
   );
 
-  const visiblePeople = selectedPerson ? peopleFromServer : filteredPeople;
+  const visiblePeople = useMemo(
+    () => (selectedPerson ? peopleFromServer : filteredPeople),
+    [selectedPerson, filteredPeople],
+  );
 
   const onInputFocus = () => {
     setIsActive(true);
   };
 
-  const onInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setQuery(event.target.value.trimStart());
-    applyQuery(event.target.value);
-    onSelect(null);
-  };
+  const onInputChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      setQuery(event.target.value.trimStart());
+      applyQuery(event.target.value);
+      onSelect(null);
+    },
+    [applyQuery, onSelect],
+  );
 
-  const onSelectPerson = (person: Person) => {
-    onSelect(person);
-    setQuery(person.name);
-    setIsActive(false);
-  };
+  const handleSelectPerson = useCallback(
+    (person: Person) => {
+      onSelect(person);
+      setQuery(person.name);
+      setIsActive(false);
+    },
+    [onSelect],
+  );
 
   return (
     <>
@@ -71,7 +80,7 @@ export const Dropdown: FC<Props> = ({
           <DropdownMenu
             people={visiblePeople}
             selectedPerson={selectedPerson}
-            handleSelectPerson={onSelectPerson}
+            onSelectPerson={handleSelectPerson}
           />
         )}
       </div>

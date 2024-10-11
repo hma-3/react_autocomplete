@@ -6,13 +6,13 @@ import { Person } from '../../types/Person';
 type Props = {
   people: Person[];
   selectedPerson: Person | null;
-  handleSelectPerson: (person: Person) => void;
+  onSelectPerson: (person: Person) => void;
 };
 
 export const DropdownMenu: FC<Props> = ({
   people,
   selectedPerson,
-  handleSelectPerson: onSelect,
+  onSelectPerson,
 }) => {
   return (
     <div className="dropdown-menu" role="menu" data-cy="suggestions-list">
@@ -24,7 +24,7 @@ export const DropdownMenu: FC<Props> = ({
               'has-background-grey-lighter': selectedPerson === person,
             })}
             data-cy="suggestion-item"
-            onClick={() => onSelect(person)}
+            onClick={() => onSelectPerson(person)}
           >
             <p
               className={cn({
